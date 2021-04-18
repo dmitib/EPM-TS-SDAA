@@ -1,21 +1,21 @@
 import { Point } from "./Point";
 
 export abstract class Shape {
-    protected color: string; 
-    protected filled: boolean;
-    protected points: Point[];
-
     abstract getType(): string;
 
-    constructor();
+    constructor(points: Point[]);
     constructor(points: Point[], color: string, filled: boolean);
-    constructor(points?: Point[], color?: string, filled?: boolean) {
+    constructor(
+        protected points: Point[],
+        protected color: string = "green",
+        protected filled: boolean = true
+    ) {
         if (points.length < 3) {
             throw new Error("points array less than 3");
         }
 
-        this.color = color || "green";
-        this.filled = filled ?? true;
+        this.color = color
+        this.filled = filled
         this.points = points;
     };
 
@@ -32,14 +32,6 @@ export abstract class Shape {
     }
 
     public addSpace(points: Point[]): string[] {
-        let result: string;
-        let acc: string[] = [];
-
-        points.forEach(point => {
-            result = ` (${point.x}, ${point.y})`;
-            acc.push(result);
-        });
-
-        return acc;
+        return points.map(point => ` (${point.x}, ${point.y})`);
     }
 }

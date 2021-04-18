@@ -21,7 +21,7 @@ export class Triangle extends Shape {
             case f1 === f2 && f2 === f3:
                 return "equilateral triangle";
                 break;
-            case (f1 === f2 || f1 === f3 || f2 === f3) && f1 % 2 === 0:
+            case f1 === f2 || f1 === f3 || f2 === f3:
                 return "isosceles triangle";
                 break;
             default:
@@ -31,6 +31,6 @@ export class Triangle extends Shape {
     }
 
     private calcTriangleFacesLength(point1: number[], point2: number[]): number {
-        return Math.round(Math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2));
+        return ~~Math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2);
     }
 }
