@@ -1,0 +1,11 @@
+{
+  "base": "EUR",
+  "rates": {
+    "DM": 1.96,
+    "Belg.Franc": 40.34,
+    "Franz.Franc": 655.96,
+    "Ir.Pfund": 78.76,
+    "Ital.Lira": 1936.27,
+    "US $": 1.06
+  }
+}
