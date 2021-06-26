@@ -4,70 +4,70 @@ const fs = require('fs');
 const PropertyUtil = require('./thirdparty/property-util');
 const InvalidFileTypeError = require('./thirdparty/invalid-file-type-error');
 const InvalidDirectoryException = require('./thirdparty/invalid-directory-exception');
-const FileExtPred = require('./file-ext-pred');
+const FileExtensionPredicate = require('./file-ext-pred');
 
-const TYPES = ['jpg', 'png'];
-const TYPES2 = ['pdf', 'doc'];
+const VALID_IMAGE_TYPES = ['jpg', 'png'];
+const VALID_DOCUMENT_TYPES = ['pdf', 'doc'];
 
 module.exports = class FileManager {
-    constructor() {
-        this.bp = PropertyUtil.loadProperty('basePath');
-    }
+  constructor() {
+    this.basePath = PropertyUtil.loadProperty('basePath');
+  }
 
-    retrieveFile(fileName) {
-        this.validateFileType(fileName);
-        const dirPath = this.bp + path.sep;
-        return path.resolve(dirPath, fileName);
-    }
+  isNotDirectory(stats) {
+    return !stats.isDirectory();
+  }
 
-    listAllImages() {
-        return this.files(this.bp, TYPES);
+  validateDirectory(stats, directoryPath) {
+    if (this.isNotDirectory(stats)) {
+      throw new InvalidDirectoryException('Invalid directory found: ' + directoryPath);
     }
+  }
 
-    listAllDocumentFiles() {
-        return this.files(this.bp, TYPES2);
-    }
+  isInvalidImage(fileName) {
+    const imageExtensionsPredicate = new FileExtensionPredicate(VALID_IMAGE_TYPES);
+    return !imageExtensionsPredicate.test(fileName);
+  }
 
-    validateFileType(fileName) {
-        if (this.isInvalidFileType(fileName)) {
-            throw new InvalidFileTypeError('File type not Supported: ' + fileName);
-        }
-    }
+  isInvalidDocument(fileName) {
+    const documentExtensionsPredicate = new FileExtensionPredicate(VALID_DOCUMENT_TYPES);
+    return !documentExtensionsPredicate.test(fileName);
+  }
 
-    isInvalidFileType(fileName) {
-        return this.isInvalidImage(fileName) && this.isInvalidDocument(fileName);
-    }
+  isInvalidFileType(fileName) {
+    return this.isInvalidImage(fileName) && this.isInvalidDocument(fileName);
+  }
 
-    isInvalidImage(fileName) {
-        const imageExtensionsPredicate = new FileExtPred(TYPES);
-        return !imageExtensionsPredicate.test(fileName);
+  validateFileType(fileName) {
+    if (this.isInvalidFileType(fileName)) {
+      throw new InvalidFileTypeError('File type not Supported: ' + fileName);
     }
+  }
 
-    isInvalidDocument(fileName) {
-        const documentExtensionsPredicate = new FileExtPred(TYPES2);
-        return !documentExtensionsPredicate.test(fileName);
-    }
+  getDirectory(directoryPath) {
+    const stats = fs.statSync(directoryPath);
+    this.validateDirectory(stats, directoryPath);
+    return fs.readdirSync(directoryPath);
+  }
 
-    files(directoryPath, allowedExtensions) {
-        const pred = new FileExtPred(allowedExtensions);
-        return this.directory(directoryPath).filter((str) => {
-            return pred.test(str);
-        });
-    }
+  getFile(fileName) {
+    this.validateFileType(fileName);
+    const directoryPath = this.basePath + path.sep;
+    return path.resolve(directoryPath, fileName);
+  }
 
-    directory(directoryPath) {
-        const dirSt = fs.statSync(directoryPath);
-        this.validateDirectory(dirSt, directoryPath);
-        return fs.readdirSync(directoryPath);
-    }
+  getFiles(directoryPath, allowedExtensions) {
+    const fileExtensionPredicate = new FileExtensionPredicate(allowedExtensions);
+    return this.getDirectory(directoryPath).filter((extension) => {
+      return fileExtensionPredicate.test(extension);
+    });
+  }
 
-    validateDirectory(stats, directoryPath) {
-        if (this.isNotDirectory(stats)) {
-            throw new InvalidDirectoryException('Invalid directory found: ' + directoryPath);
-        }
-    }
+  getAllImages() {
+    return this.getFiles(this.basePath, VALID_IMAGE_TYPES);
+  }
 
-    isNotDirectory(stats) {
-        return !stats.isDirectory();
-    }
+  getAllDocumentFiles() {
+    return this.getFiles(this.basePath, VALID_DOCUMENT_TYPES);
+  }
 };

@@ -1,22 +1,27 @@
-class H {
-    static main() {
-        const L = 1000; // limit the seq of Harshad numbers
-        for (let i = 1; i <= L; i++) {
-            if (i % H.loop(i) === 0) {
-                console.log(i);
-            }
-        }
+class Harshad {
+  static MAGIC_NUMBER_TEN = 10;
+
+  static showHarshadNumbers() {
+    const limitNumbers = 1000;
+
+    for (let number = 1; number <= limitNumbers; number++) {
+      if (number % Harshad.loop(number) === 0) {
+        console.log(number);
+      }
+    }
+  }
+
+  static loop(number) {
+    let sum = 0;
+
+    while (number > 0) {
+      sum += number % Harshad.MAGIC_NUMBER_TEN;
+
+      number = number / Harshad.MAGIC_NUMBER_TEN;
     }
 
-    static loop(N) {
-        let S = 0;
-        while (N > 0) {
-            let D = N % 10;
-            S += D;
-            N = (N - D) / 10;
-        }
-        return S;
-    }
+    return sum;
+  }
 }
 
-H.main();
+Harshad.showHarshadNumbers();
