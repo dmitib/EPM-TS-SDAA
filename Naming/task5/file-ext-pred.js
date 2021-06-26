@@ -1,11 +1,11 @@
-module.exports = class FileExtPred {
-    constructor(extns) {
-        this.extns = extns;
-    }
+module.exports = class FileExtensionPredicate {
+  constructor(extensions) {
+    this.extensions = extensions;
+  }
 
-    test(fileName) {
-        return this.extns.some((extn) => {
-            return fileName.toLowerCase().endsWith(extn);
-        });
-    }
+  checkExtension(fileName) {
+    return this.extensions.some((extension) => {
+      return fileName.toLowerCase().endsWith(extension);
+    });
+  }
 };

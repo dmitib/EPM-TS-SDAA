@@ -1,18 +1,18 @@
 module.exports = class User {
-    constructor(sName, dBirth, subordinateArray = [], bAdmin = false) {
-        this.sName = sName;
-        this.dBirth = dBirth;
-        this.bAdmin = bAdmin;
-        this.subordinateArray = subordinateArray;
-        this.iR = 0;
+    constructor(name, dateOfBirth, subordinates, isAdmin) {
+        this.name = name;
+        this.dateOfBirth = dateOfBirth;
+        this.subordinates = subordinates || [];
+        this.isAdmin = isAdmin || false;
+        this.rating = 0;
     }
 
     toString() {
-        return 'User [dateOfBirth=' + this.dBirth + ', name=' + this.sName + ', isAdmin=' + this.bAdmin + ', subordinates=['
-            + this.subordinateArray.map(s => s.toString()).join(', ') + '], rating=' + this.iR + ']';
+        return 'User [dateOfBirth=' + this.dateOfBirth + ', name=' + this.name + ', isAdmin=' + this.isAdmin + ', subordinates=['
+            + this.subordinates.map(s => s.toString()).join(', ') + '], rating=' + this.rating + ']';
     }
 
-    setRating(iR) {
-        this.iR = iR;
+    setRating(rating) {
+        this.rating = rating;
     }
 }

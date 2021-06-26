@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "JS Clean Code Tasks",
     "scripts": {
-        "test": "mocha \"./**/*.spec.js\""
+        "test": "node node_modules/mocha/bin/mocha \"./**/*.spec.js\""
     },
     "author": "",
     "license": "ISC",
