@@ -1,39 +1,36 @@
 module.exports = class UserReportController {
-    constructor() {
-        this.userReportBuilder = null;
+  constructor() {
+    this.userReportBuilder = null;
+  }
+
+  getUserTotalOrderAmountView(userId, model) {
+    let totalMessage;
+
+    try {
+      totalMessage = this.getUserTotalMessage(userId);
+    } catch (error) {
+      if (error.type === "TECHNICAL_ERROR") {
+        return error.message;
+      }
+
+      totalMessage = error.message;
     }
 
-    getUserTotalOrderAmountView(userId, model) {
-        const totalMessage = this.getUserTotalMessage(userId);
-        if (totalMessage === null)
-            return 'technicalError';
+    model.addAttribute("userTotalMessage", totalMessage);
+    return "userTotal";
+  }
 
-        model.addAttribute('userTotalMessage', totalMessage);
+  getUserTotalMessage(userId) {
+    const amount = this.userReportBuilder.getUserTotalOrderAmount(userId);
 
-        return 'userTotal';
-    }
+    return `User Total: ${amount}$`;
+  }
 
-    getUserTotalMessage(userId) {
-        const amount = this.userReportBuilder.getUserTotalOrderAmount(userId);
+  getUserReportBuilder() {
+    return this.userReportBuilder;
+  }
 
-        if (amount == null)
-            return null;
-
-        if (amount === -1)
-            return 'WARNING: User ID doesn\'t exist.';
-        if (amount === -2)
-            return 'WARNING: User have no submitted orders.';
-        if (amount === -3)
-            return 'ERROR: Wrong order amount.';
-
-        return `User Total: ${amount}$`;
-    }
-
-    getUserReportBuilder() {
-        return this.userReportBuilder;
-    }
-
-    setUserReportBuilder(userReportBuilder) {
-        this.userReportBuilder = userReportBuilder;
-    }
+  setUserReportBuilder(userReportBuilder) {
+    this.userReportBuilder = userReportBuilder;
+  }
 }

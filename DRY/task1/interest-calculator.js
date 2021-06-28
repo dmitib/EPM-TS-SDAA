@@ -1,68 +1,50 @@
-const AGE = 60;
+const SENIOR_CITIZEN_AGE = 60;
 const INTEREST_PERCENT = 4.5;
 const SENIOR_PERCENT = 5.5;
 const BONUS_AGE = 13;
 
-function durationBetweenDatesInYears(from, to) {
-    const start = new Date(from);
-    const end = new Date(to);
+module.exports = {
+  getInterest
+};
 
-    const diffYear = end.getFullYear() - start.getFullYear();
+function getInterest(accountDetails) {
+  let interest = 0;
 
-    if (end.getMonth() < start.getMonth()) {
-        return diffYear - 1;
-    }
-    if (end.getMonth() === start.getMonth() && end.getDate() < start.getDate()) {
-        return diffYear - 1;
-    }
-
-    return diffYear;
-}
-
-
-function durationSinceStartDateInYears(startDate) {
-    const start = new Date(startDate);
-    const end = new Date();
-
-    const diffYear = end.getFullYear() - start.getFullYear();
-
-    if (end.getMonth() < start.getMonth()) {
-        return diffYear - 1;
-    }
-    if (end.getMonth() === start.getMonth() && end.getDate() < start.getDate()) {
-        return diffYear - 1;
-    }
-
-    return diffYear;
+  if (isAccountStartedAfterBonusAge(accountDetails)) {
+    interest = calculateInterestByAge(accountDetails);
+  }
+  
+  return interest;
 }
 
 function isAccountStartedAfterBonusAge(accountDetails) {
-    return durationBetweenDatesInYears(accountDetails.getBirth(), accountDetails.getStartDate()) > BONUS_AGE;
+  return getYearsBetweenDates(accountDetails.getBirth(), accountDetails.getStartDate()) > BONUS_AGE;
 }
 
-function interest(accountDetails) {
-    let interest = 0;
-    if (isAccountStartedAfterBonusAge(accountDetails)) {
-        if (AGE <= accountDetails.getAge()) {
-            //interest = (PrincipalAmount * DurationInYears * AnnualInterestRate) / 100
-            interest = accountDetails.getBalance()
-                    * durationSinceStartDateInYears(accountDetails.getStartDate()) * SENIOR_PERCENT / 100;
-        } else {
-            interest = accountDetails.getBalance().doubleValue()
-                    * durationSinceStartDateInYears(accountDetails.getStartDate()) * INTEREST_PERCENT / 100;
-        }
-    }
-    return interest;
+function calculateInterestByAge(accountDetails) {
+  if (SENIOR_CITIZEN_AGE <= getYearsBetweenDates(accountDetails.getBirth())) {
+    return calculateInterest(accountDetails.getBalance(), SENIOR_PERCENT);
+  } else {
+    return calculateInterest(accountDetails.getBalance(), INTEREST_PERCENT);
+  }
 }
 
-function calculateInterest(accountDetails) {
-    if (isAccountStartedAfterBonusAge(accountDetails)) {
-        return interest(accountDetails);
-    } else {
-        return 0;
-    }
+function calculateInterest(balance, percent) {
+  return balance * getYearsBetweenDates(accountDetails.getStartDate()) * percent / 100;
 }
 
-module.exports = {
-    calculateInterest,
-};
+function getYearsBetweenDates(startDateString = Date.now(), endDateString = Date.now()) {
+  const start = new Date(startDateString);
+  const end = new Date(endDateString);
+  const diffYear = end.getFullYear() - start.getFullYear();
+
+  if (isDateGapLessThanYear(end, start)) {
+    return diffYear - 1;
+  }
+
+  return diffYear;
+}
+
+function isDateGapLessThanYear(end, start) {
+  return end.getMonth() < start.getMonth() || end.getMonth() === start.getMonth() && end.getDate() < start.getDate();
+}
